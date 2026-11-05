@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PATCH // 001</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #121212;
+      --red: #d9381e;
+      --green: #1a7f37;
+      --del-bg: #ffebe9;
+      --add-bg: #dafbe1;
+      --gray: #767676;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background-image: radial-gradient(#121212 0.65px, transparent 0.65px);
+      background-size: 16px 16px;
+    }
+
+    .ticket {
+      width: 100%;
+      max-width: 540px;
+      background: var(--bg);
+      border: 2.5px solid var(--ink);
+      box-shadow: 7px 7px 0px var(--ink);
+      position: relative;
+    }
+
+    .header {
+      border-bottom: 2.5px solid var(--ink);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .header-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border: 1.5px solid var(--bg);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 2.5px solid var(--ink);
+      font-size: 11px;
+    }
+
+    .meta-box {
+      padding: 10px 18px;
+    }
+
+    .meta-box:first-child {
+      border-right: 2.5px solid var(--ink);
+    }
+
+    .meta-label {
+      color: var(--gray);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .meta-val {
+      font-weight: 700;
+    }
+
+    .sec-head {
+      padding: 10px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1.5px solid var(--ink);
+      background: #e8e4db;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .code-block {
+      font-size: 12px;
+      line-height: 1.65;
+      border-bottom: 2.5px solid var(--ink);
+      overflow-x: auto;
+    }
+
+    .line {
+      display: flex;
+      padding: 1px 14px;
+      white-space: pre;
+    }
+
+    .line-num {
+      width: 24px;
+      color: var(--gray);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .line-sign {
+      width: 16px;
+      font-weight: 700;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .del {
+      background-color: var(--del-bg);
+      color: #82071e;
+    }
+
+    .add {
+      background-color: var(--add-bg);
+      color: #116329;
+    }
+
+    .comment {
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-bottom: 2.5px solid var(--ink);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .note strong {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 1px 5px;
+      font-weight: 700;
+    }
+
+    .stdout-wrap {
+      display: none;
+      border-bottom: 2.5px solid var(--ink);
+      background: var(--ink);
+      color: var(--bg);
+      padding: 16px 18px;
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    .stdout-wrap.active {
+      display: block;
+    }
+
+    .stdout-prompt {
+      color: #7ee787;
+      font-weight: 700;
+    }
+
+    .scribble {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #444;
+      color: #f4f1ea;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sign-off {
+      font-size: 11px;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 2px 6px;
+      font-weight: 700;
+    }
+
+    .actions {
+      padding: 14px 18px;
+    }
+
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      border: 2px solid var(--ink);
+      background: var(--bg);
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 3px 3px 0px var(--ink);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 0px 0px 0px var(--ink);
+    }
+
+    .btn.executed {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+
+  <main class="ticket">
+    <header class="header">
+      <span class="header-title">PR #01 // CONFESSION.PY</span>
+      <span class="badge" id="status-badge">NEEDS FIX</span>
+    </header>
+
+    <section class="meta">
+      <div class="meta-box">
+        <span class="meta-label">AUTHOR</span>
+        <span class="meta-val">kamu</span>
+      </div>
+      <div class="meta-box">
+        <span class="meta-label">REVIEWED BY</span>
+        <span class="meta-val">your fav kera</span>
+      </div>
+    </section>
+
+    <div class="sec-head">
+      <span>git diff -- confession.py</span>
+      <span>-4 / +5 lines</span>
+    </div>
+
+    <div class="code-block">
+      <div class="line del"><span class="line-num">1</span><span class="line-sign">-</span><span>Perasaan_aku = "kamu"</span></div>
+      <div class="line del"><span class="line-num">2</span><span class="line-sign">-</span><span>If perasaan_aku == "kamu":</span></div>
+      <div class="line del"><span class="line-num">3</span><span class="line-sign">-</span><span>Status = "suka balik"</span></div>
+      <div class="line del"><span class="line-num">4</span><span class="line-sign">-</span><span>Print("aku juga suka kamu")</span></div>
+      <div class="line"><span class="line-num"> </span><span class="line-sign"> </span><span class="comment"># ^ fix syntax & tambahin f-string</span></div>
+      <div class="line add"><span class="line-num">1</span><span class="line-sign">+</span><span>perasaan_aku: str = "kamu"</span></div>
+      <div class="line add"><span class="line-num">2</span><span class="line-sign">+</span><span></span></div>
+      <div class="line add"><span class="line-num">3</span><span class="line-sign">+</span><span>if perasaan_aku == "kamu":</span></div>
+      <div class="line add"><span class="line-num">4</span><span class="line-sign">+</span><span>    status = "suka balik"</span></div>
+      <div class="line add"><span class="line-num">5</span><span class="line-sign">+</span><span>    print(f"[{status.upper()}] Aku juga suka {perasaan_aku}.")</span></div>
+    </div>
+
+    <div class="note">
+      <strong>CATATAN REVIEWER:</strong><br>
+      Kodenya tadi kena auto-capitalize HP sama belum pake <code>f-string</code>. Udah dibenerin biar langsung jalan tanpa error.
+    </div>
+
+    <div class="stdout-wrap" id="terminal">
+      <div><span class="stdout-prompt">$</span> python3 confession.py</div>
+      <div id="typed-output" style="margin-top: 6px;"></div>
+      <div class="scribble" id="final-msg" style="display: none;">
+        <span>STATUS: ACC / MERGED</span>
+        <span class="sign-off">— From your fav kera</span>
+      </div>
+    </div>
+
+    <footer class="actions">
+      <button class="btn" id="run-btn" onclick="executePatch()">
+        [ RUN CODE & MERGE ]
+      </button>
+    </footer>
+  </main>
+
+  <script>
+    let done = false;
+    function executePatch() {
+      if (done) return;
+      done = true;
+
+      const term = document.getElementById('terminal');
+      const out = document.getElementById('typed-output');
+      const badge = document.getElementById('status-badge');
+      const btn = document.getElementById('run-btn');
+      const finalMsg = document.getElementById('final-msg');
+
+      term.classList.add('active');
+      badge.textContent = 'MERGED';
+      badge.style.background = '#1a7f37';
+      btn.textContent = 'PATCH APPLIED // 200 OK';
+      btn.classList.add('executed');
+
+      const text = '[SUKA BALIK] Aku juga suka kamu.';
+      let i = 0;
+      const interval = setInterval(() => {
+        out.textContent += text.charAt(i);
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+          setTimeout(() => {
+            finalMsg.style.display = 'flex';
+          }, 250);
+        }
+      }, 35);
+    }
+  </script>
+</body>
+</html>
